@@ -2,7 +2,6 @@ package com.vinilab.ecommerce_api.entities;
 
 import com.vinilab.ecommerce_api.enums.OrderStatus;
 import jakarta.persistence.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -13,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "order")
+@Table(name = "tb_order")
 public class Order implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -22,6 +21,8 @@ public class Order implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private OrderStatus orderStatus;
 
     private BigDecimal total;
@@ -31,10 +32,10 @@ public class Order implements Serializable {
     @JoinColumn(name = "client_id")
     Client client;
 
-    @OneToMany
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<OrderItem>();
 
-    @OneToOne
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Payment payment;
 
     public Order() {
@@ -108,13 +109,12 @@ public class Order implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Order order = (Order) o;
-        return Objects.equals(id, order.id) && orderStatus == order.orderStatus && Objects.equals(total, order.total) && Objects.equals(createdAt, order.createdAt) && Objects.equals(client, order.client) && Objects.equals(orderItems, order.orderItems) && Objects.equals(payment, order.payment);
+        if (!(o instanceof Order order)) return false;
+        return Objects.equals(id, order.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, orderStatus, total, createdAt, client, orderItems, payment);
+        return Objects.hashCode(id);
     }
 }

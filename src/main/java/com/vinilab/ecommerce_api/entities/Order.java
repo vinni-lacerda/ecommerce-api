@@ -25,7 +25,10 @@ public class Order implements Serializable {
     @Column(nullable = false)
     private OrderStatus orderStatus;
 
+    @Column(nullable = false)
     private BigDecimal total;
+
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @ManyToOne
@@ -33,7 +36,7 @@ public class Order implements Serializable {
     Client client;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItem> orderItems = new ArrayList<OrderItem>();
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Payment payment;
@@ -41,46 +44,27 @@ public class Order implements Serializable {
     public Order() {
     }
 
-    public Order(Long id, OrderStatus orderStatus, BigDecimal total, LocalDateTime createdAt, Client client, List<OrderItem> orderItems, Payment payment) {
-        this.id = id;
-        this.orderStatus = orderStatus;
-        this.total = total;
-        this.createdAt = createdAt;
+    public Order(Client client) {
+        this.orderStatus = OrderStatus.CREATED;
+        this.total = BigDecimal.ZERO;
+        this.createdAt = LocalDateTime.now();
         this.client = client;
-        this.orderItems = orderItems;
-        this.payment = payment;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public OrderStatus getOrderStatus() {
         return orderStatus;
-    }
-
-    public void setOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public BigDecimal getTotal() {
         return total;
     }
 
-    public void setTotal(BigDecimal total) {
-        this.total = total;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
     public List<OrderItem> getOrderItems() {
@@ -95,16 +79,8 @@ public class Order implements Serializable {
         return payment;
     }
 
-    public void setPayment(Payment payment) {
-        this.payment = payment;
-    }
-
     public Client getClient() {
         return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
     }
 
     @Override
